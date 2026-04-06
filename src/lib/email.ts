@@ -48,10 +48,13 @@ export async function sendNotificationEmail(
 
     const { subject, html } = getEmailTemplate(notificationType, templateData);
 
+    const testOverride = process.env.EMAIL_TEST_MODE === "true" ? process.env.GMAIL_USER : null;
+    const toEmail = testOverride || user.email;
+
     await transporter.sendMail({
       from: `"Apero HR" <${process.env.GMAIL_USER}>`,
-      to: user.email,
-      subject,
+      to: toEmail,
+      subject: testOverride ? `[To: ${user.email}] ${subject}` : subject,
       html,
     });
 

@@ -14,7 +14,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { key: "orders", label: "Orders", href: "/orders", icon: FileText, roles: ["HIRING_MANAGER", "CEO_VENTURE", "CEO_GROUP", "HR"] },
   { key: "approvals", label: "Approvals", href: "/approvals", icon: CheckSquare, roles: ["CEO_VENTURE", "CEO_GROUP"], badge: "approvals" },
   { key: "jd-repository", label: "JD Repository", href: "/jd-repository", icon: BookOpen, roles: ["HIRING_MANAGER", "HR"] },
-  { key: "headcount-plans", label: "HC Plans", href: "/headcount-plans", icon: BarChart3, roles: ["HR"] },
+  { key: "headcount-plans", label: "HC Plans", href: "/headcount-plans", icon: BarChart3, roles: ["HR", "CEO_VENTURE", "CEO_GROUP"] },
   { key: "reports", label: "Reports", href: "/reports", icon: PieChart, roles: ["HR"] },
   { key: "notifications", label: "Notifications", href: "/notifications", icon: Bell, roles: ["HIRING_MANAGER", "CEO_VENTURE", "CEO_GROUP", "HR"], badge: "notifications" },
 ];
