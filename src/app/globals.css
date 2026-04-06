@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark *));
+
 @theme inline {
   --color-primary: #2563eb;
   --color-primary-dark: #1d4ed8;
@@ -21,6 +23,11 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+.dark body {
+  background: #0f172a;
+  color: #f1f5f9;
 }
 
 input, button, a {

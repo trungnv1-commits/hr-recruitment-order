@@ -13,13 +13,27 @@ export const metadata: Metadata = {
   description: "Hệ thống quản lý order tuyển dụng - Apero",
 };
 
+const darkModeScript = `
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {}
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${inter.variable} h-full`}>
+    <html lang="vi" className={`${inter.variable} h-full`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: darkModeScript }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         <Toaster position="top-right" />
         {children}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Building2, LogOut, Menu, X, Bell } from "lucide-react";
+import { Building2, LogOut, Menu, X, Bell, Moon, Sun } from "lucide-react";
 import { MENU_ITEMS, ROLE_LABELS } from "@/lib/menu-config";
 
 interface UserInfo {
@@ -21,6 +21,24 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [pendingApprovals, setPendingApprovals] = useState(0);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    setDarkMode(stored === "dark");
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -63,10 +81,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-sm text-slate-500">Loading...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading...</p>
         </div>
       </div>
     );
@@ -84,11 +102,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 dark:bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -97,23 +115,23 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-50
-          w-64 bg-white border-r border-slate-200
+          w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700
           flex flex-col
           transform transition-transform duration-200 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         {/* Brand */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-semibold text-slate-900">Apero HR</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Apero HR</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+            className="lg:hidden p-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -140,12 +158,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   transition-colors cursor-pointer
                   ${
                     isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
                   }
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                <Icon className={`w-5 h-5 ${isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"}`} />
                 <span className="flex-1">{item.label}</span>
                 {badgeCount > 0 && (
                   <span className="min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-red-500 text-white text-xs font-semibold rounded-full">
@@ -157,21 +175,47 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
+        {/* Dark mode toggle */}
+        <div className="px-4 pb-2">
+          <button
+            onClick={toggleDarkMode}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+          >
+            {darkMode ? (
+              <Sun className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+            ) : (
+              <Moon className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+            )}
+            <span className="flex-1 text-left">{darkMode ? "Light Mode" : "Dark Mode"}</span>
+            <span
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                darkMode ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-600"
+              }`}
+            >
+              <span
+                className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${
+                  darkMode ? "translate-x-4.5" : "translate-x-0.5"
+                }`}
+              />
+            </span>
+          </button>
+        </div>
+
         {/* User info */}
-        <div className="border-t border-slate-100 p-4">
+        <div className="border-t border-slate-100 dark:border-slate-700 p-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-sm font-semibold text-slate-600">
+            <div className="w-9 h-9 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-sm font-semibold text-slate-600 dark:text-slate-300">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 truncate">{user.fullName}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user.fullName}</p>
               <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${roleInfo.bg} ${roleInfo.color}`}>
                 {roleInfo.label}
               </span>
             </div>
             <button
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+              className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg cursor-pointer"
               title="Đăng xuất"
             >
               <LogOut className="w-4 h-4" />
@@ -183,15 +227,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-30">
+        <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer"
+              className="lg:hidden p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-semibold text-slate-900">
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
               {getPageTitle(pathname)}
             </h1>
           </div>
@@ -199,7 +243,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/notifications")}
-              className="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg cursor-pointer"
+              className="relative p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
@@ -208,7 +252,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </span>
               )}
             </button>
-            <span className="hidden sm:block text-sm text-slate-600">{user.fullName}</span>
+            <span className="hidden sm:block text-sm text-slate-600 dark:text-slate-300">{user.fullName}</span>
           </div>
         </header>
 
