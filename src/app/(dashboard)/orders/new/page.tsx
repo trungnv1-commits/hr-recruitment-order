@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Send, ArrowLeft } from "lucide-react";
+import { Save, Send, ArrowLeft, BookOpen, ChevronDown, X, Search, Eye } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface UserInfo {
@@ -11,6 +11,22 @@ interface UserInfo {
   role: string;
   fullName: string;
   ventureId: string | null;
+}
+
+interface Venture {
+  id: string;
+  name: string;
+  code: string;
+}
+
+interface JDTemplate {
+  id: string;
+  ventureId: string;
+  positionName: string;
+  level: string | null;
+  jdContent: string | null;
+  candidateProfile: string | null;
+  venture: Venture;
 }
 
 const LEVELS = [
@@ -35,6 +51,14 @@ export default function NewOrderPage() {
   const [reason, setReason] = useState("");
   const [jdUrl, setJdUrl] = useState("");
 
+  // JD Template state
+  const [jdTemplates, setJdTemplates] = useState<JDTemplate[]>([]);
+  const [selectedJdId, setSelectedJdId] = useState<string | null>(null);
+  const [selectedJdTemplate, setSelectedJdTemplate] = useState<JDTemplate | null>(null);
+  const [jdSearchQuery, setJdSearchQuery] = useState("");
+  const [showJdDropdown, setShowJdDropdown] = useState(false);
+  const [showJdPreview, setShowJdPreview] = useState(false);
+
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.json())
@@ -53,6 +77,38 @@ export default function NewOrderPage() {
       .catch(() => router.push("/login"))
       .finally(() => setLoading(false));
   }, [router]);
+
+  // Fetch JD templates
+  useEffect(() => {
+    fetch("/api/jd-templates")
+      .then((r) => r.json())
+      .then((data) => {
+        setJdTemplates(data.templates || []);
+      })
+      .catch(() => {});
+  }, []);
+
+  const filteredJdTemplates = jdTemplates.filter((t) =>
+    t.positionName.toLowerCase().includes(jdSearchQuery.toLowerCase())
+  );
+
+  const handleSelectJdTemplate = (template: JDTemplate) => {
+    setSelectedJdId(template.id);
+    setSelectedJdTemplate(template);
+    setPositionName(template.positionName);
+    if (template.level) {
+      setLevel(template.level);
+    }
+    setShowJdDropdown(false);
+    setJdSearchQuery("");
+  };
+
+  const handleClearJdTemplate = () => {
+    setSelectedJdId(null);
+    setSelectedJdTemplate(null);
+    setShowJdDropdown(false);
+    setJdSearchQuery("");
+  };
 
   const validateForm = (): boolean => {
     if (!positionName.trim()) {
@@ -85,6 +141,7 @@ export default function NewOrderPage() {
         recruitmentType,
         reason,
         jdAttachmentUrl: jdUrl || null,
+        jdTemplateId: selectedJdId || null,
       }),
     });
 
@@ -219,6 +276,138 @@ export default function NewOrderPage() {
             </div>
           </div>
 
+          {/* JD Template Selector */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <span className="flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-blue-500" />
+                Chọn JD Template
+              </span>
+              <span className="text-slate-400 text-xs font-normal ml-1">(không bắt buộc)</span>
+            </label>
+
+            {selectedJdTemplate ? (
+              <div className="border border-blue-200 bg-blue-50/50 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-semibold text-slate-900">
+                      {selectedJdTemplate.positionName}
+                    </span>
+                    {selectedJdTemplate.level && (
+                      <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">
+                        {selectedJdTemplate.level}
+                      </span>
+                    )}
+                    <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-medium">
+                      {selectedJdTemplate.venture.code}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowJdPreview(!showJdPreview)}
+                      className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg cursor-pointer transition-colors"
+                      title="Xem chi tiết"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClearJdTemplate}
+                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                      title="Bỏ chọn"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {showJdPreview && selectedJdTemplate.jdContent && (
+                  <div className="mt-3 pt-3 border-t border-blue-100">
+                    <div className="bg-white rounded-lg p-3 text-xs text-slate-600 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
+                      {selectedJdTemplate.jdContent}
+                    </div>
+                    {selectedJdTemplate.candidateProfile && (
+                      <div className="bg-amber-50 rounded-lg p-3 mt-2 text-xs text-amber-800 whitespace-pre-wrap leading-relaxed">
+                        <span className="font-semibold">Hồ sơ ứng viên: </span>
+                        {selectedJdTemplate.candidateProfile}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowJdDropdown(!showJdDropdown)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:border-slate-300 cursor-pointer transition-colors text-left"
+                >
+                  <span className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4" />
+                    Chọn JD template có sẵn...
+                  </span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showJdDropdown ? "rotate-180" : ""}`} />
+                </button>
+
+                {showJdDropdown && (
+                  <div className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                    {/* Search input */}
+                    <div className="p-2 border-b border-slate-100">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                          type="text"
+                          value={jdSearchQuery}
+                          onChange={(e) => setJdSearchQuery(e.target.value)}
+                          placeholder="Tìm kiếm template..."
+                          className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400"
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+
+                    {/* Template list */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {filteredJdTemplates.length > 0 ? (
+                        filteredJdTemplates.map((template) => (
+                          <button
+                            key={template.id}
+                            type="button"
+                            onClick={() => handleSelectJdTemplate(template)}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors text-left border-b border-slate-50 last:border-b-0"
+                          >
+                            <BookOpen className="w-4 h-4 text-slate-400 shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-medium text-slate-900 truncate">
+                                {template.positionName}
+                              </div>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                {template.level && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded font-medium">
+                                    {template.level}
+                                  </span>
+                                )}
+                                <span className="text-[10px] text-slate-400">
+                                  {template.venture.code}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-4 py-6 text-center text-sm text-slate-400">
+                          Không tìm thấy template
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Position Name */}
           <div>
             <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -232,6 +421,11 @@ export default function NewOrderPage() {
               placeholder="VD: Backend Developer, Product Manager..."
               className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
             />
+            {selectedJdTemplate && positionName !== selectedJdTemplate.positionName && (
+              <p className="text-xs text-amber-600 mt-1">
+                Tên vị trí đã được chỉnh sửa thủ công (khác với template)
+              </p>
+            )}
           </div>
 
           {/* Level */}
