@@ -147,15 +147,15 @@ export default function ApprovalsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Approvals</h2>
-        <p className="text-slate-500 text-sm mt-1">Quản lý yêu cầu duyệt order tuyển dụng</p>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Approvals</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Quản lý yêu cầu duyệt order tuyển dụng</p>
       </div>
 
-      <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
-        <button onClick={() => setActiveTab("pending")} className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${activeTab === "pending" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+        <button onClick={() => setActiveTab("pending")} className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${activeTab === "pending" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}>
           Chờ duyệt
         </button>
-        <button onClick={() => setActiveTab("completed")} className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${activeTab === "completed" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+        <button onClick={() => setActiveTab("completed")} className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${activeTab === "completed" ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}>
           Đã xử lý
         </button>
       </div>
@@ -163,20 +163,20 @@ export default function ApprovalsPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-              <div className="h-5 w-48 bg-slate-200 rounded animate-pulse" />
-              <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
-              <div className="h-4 w-24 bg-slate-200 rounded animate-pulse" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 space-y-3">
+              <div className="h-5 w-48 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+              <div className="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
             </div>
           ))}
         </div>
       ) : approvals.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <FileX className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-slate-900 mb-1">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <FileX className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-1">
             {activeTab === "pending" ? "Không có yêu cầu chờ duyệt" : "Chưa có yêu cầu đã xử lý"}
           </h3>
-          <p className="text-slate-500 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
             {activeTab === "pending" ? "Tất cả yêu cầu đã được xử lý" : "Chưa có lịch sử duyệt"}
           </p>
         </div>
@@ -188,20 +188,20 @@ export default function ApprovalsPage() {
             const isInlineTarget = inlineAction?.id === approval.id;
 
             return (
-              <div key={approval.id} className="bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-colors">
+              <div key={approval.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
                 <div className="cursor-pointer" onClick={() => router.push(`/orders/${approval.order.id}`)}>
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">{approval.order.positionName}</h3>
-                      <p className="text-xs text-slate-500">{approval.order.level} &middot; SL: {approval.order.quantity}</p>
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{approval.order.positionName}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{approval.order.level} &middot; SL: {approval.order.quantity}</p>
                     </div>
                     <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${statusInfo.bg} ${statusInfo.color}`}>{statusInfo.label}</span>
                   </div>
                   <div className="space-y-1.5 mb-3">
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                       <User className="w-3.5 h-3.5" />{approval.order.hiringManager.fullName}
                     </div>
-                    <p className="text-xs text-slate-500">{approval.order.venture.name} &middot; {formatDate(approval.order.createdAt)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{approval.order.venture.name} &middot; {formatDate(approval.order.createdAt)}</p>
                     {hcInfo && (
                       <div className={`inline-flex items-center gap-1 text-xs font-medium ${hcInfo.color}`}>
                         <span>{hcInfo.icon}</span>{hcInfo.label}
@@ -211,7 +211,7 @@ export default function ApprovalsPage() {
                 </div>
 
                 {activeTab === "pending" && !isInlineTarget && (
-                  <div className="flex gap-2 pt-3 border-t border-slate-100">
+                  <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
                     <button onClick={(e) => { e.stopPropagation(); setInlineAction({ id: approval.id, type: "approve" }); setInlineComment(""); }} className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg cursor-pointer transition-colors">
                       <CheckCircle className="w-3.5 h-3.5" />Duyệt
                     </button>
@@ -222,13 +222,13 @@ export default function ApprovalsPage() {
                 )}
 
                 {isInlineTarget && (
-                  <div className="pt-3 border-t border-slate-100 space-y-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2" onClick={(e) => e.stopPropagation()}>
                     <textarea
                       value={inlineComment}
                       onChange={(e) => setInlineComment(e.target.value)}
                       placeholder={inlineAction.type === "reject" ? "Lý do từ chối (bắt buộc)..." : "Nhận xét (không bắt buộc)..."}
                       rows={2}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 resize-none"
                     />
                     <div className="flex gap-2">
                       <button
@@ -238,7 +238,7 @@ export default function ApprovalsPage() {
                       >
                         {actionLoading ? "Đang xử lý..." : inlineAction.type === "approve" ? "Xác nhận duyệt" : "Xác nhận từ chối"}
                       </button>
-                      <button onClick={() => { setInlineAction(null); setInlineComment(""); }} className="px-3 py-2 text-xs font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
+                      <button onClick={() => { setInlineAction(null); setInlineComment(""); }} className="px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-lg cursor-pointer transition-colors">
                         Hủy
                       </button>
                     </div>
@@ -246,7 +246,7 @@ export default function ApprovalsPage() {
                 )}
 
                 {activeTab === "completed" && (
-                  <div className="pt-3 border-t border-slate-100">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-700">
                     <div className="flex items-center gap-2">
                       {approval.decision === "APPROVED" && <CheckCircle className="w-4 h-4 text-emerald-500" />}
                       {approval.decision === "REJECTED" && <XCircle className="w-4 h-4 text-red-500" />}
@@ -254,9 +254,9 @@ export default function ApprovalsPage() {
                       <span className={`text-xs font-medium ${approval.decision === "APPROVED" ? "text-emerald-600" : approval.decision === "REJECTED" ? "text-red-600" : "text-slate-500"}`}>
                         {approval.decision === "APPROVED" ? "Đã duyệt" : approval.decision === "REJECTED" ? "Từ chối" : "Đã hủy"}
                       </span>
-                      {approval.decidedAt && <span className="text-xs text-slate-400">{formatDate(approval.decidedAt)}</span>}
+                      {approval.decidedAt && <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(approval.decidedAt)}</span>}
                     </div>
-                    {approval.comment && <p className="text-xs text-slate-600 mt-1 p-2 bg-slate-50 rounded-lg">{approval.comment}</p>}
+                    {approval.comment && <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg">{approval.comment}</p>}
                   </div>
                 )}
               </div>

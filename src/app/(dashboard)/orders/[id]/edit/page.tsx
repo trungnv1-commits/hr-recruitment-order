@@ -171,11 +171,11 @@ export default function EditOrderPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 space-y-6">
           {[...Array(5)].map((_, i) => (
             <div key={i}>
-              <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2" />
-              <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+              <div className="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-2" />
+              <div className="h-12 bg-slate-200 dark:bg-slate-700 rounded-xl animate-pulse" />
             </div>
           ))}
         </div>
@@ -187,71 +187,71 @@ export default function EditOrderPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <button onClick={() => router.push(`/orders/${id}`)} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm cursor-pointer transition-colors">
+      <button onClick={() => router.push(`/orders/${id}`)} className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 text-sm cursor-pointer transition-colors">
         <ArrowLeft className="w-4 h-4" />Quay lại chi tiết order
       </button>
 
       {order.status === "REJECTED" && rejectionRecord && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-2xl p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Order bị từ chối</h3>
-              <p className="text-sm text-red-700 mt-1">Bởi: {rejectionRecord.approver.fullName}</p>
-              {rejectionRecord.comment && <p className="text-sm text-red-700 mt-1 font-medium">{rejectionRecord.comment}</p>}
+              <h3 className="text-sm font-semibold text-red-900 dark:text-red-300">Order bị từ chối</h3>
+              <p className="text-sm text-red-700 dark:text-red-400 mt-1">Bởi: {rejectionRecord.approver.fullName}</p>
+              {rejectionRecord.comment && <p className="text-sm text-red-700 dark:text-red-400 mt-1 font-medium">{rejectionRecord.comment}</p>}
             </div>
           </div>
         </div>
       )}
 
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-6">Chỉnh sửa Order</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Chỉnh sửa Order</h2>
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Loại tuyển <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Loại tuyển <span className="text-red-500">*</span></label>
             <div className="flex gap-4">
-              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "NEW" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
+              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "NEW" ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30" : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"}`}>
                 <input type="radio" name="recruitmentType" value="NEW" checked={recruitmentType === "NEW"} onChange={() => setRecruitmentType("NEW")} className="w-4 h-4 text-blue-600 accent-blue-600" />
-                <div><div className="text-sm font-medium text-slate-900">Tuyển mới (NEW)</div><div className="text-xs text-slate-500">Vị trí mới trong kế hoạch</div></div>
+                <div><div className="text-sm font-medium text-slate-900 dark:text-white">Tuyển mới (NEW)</div><div className="text-xs text-slate-500 dark:text-slate-400">Vị trí mới trong kế hoạch</div></div>
               </label>
-              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "REPLACEMENT" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
+              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "REPLACEMENT" ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30" : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"}`}>
                 <input type="radio" name="recruitmentType" value="REPLACEMENT" checked={recruitmentType === "REPLACEMENT"} onChange={() => setRecruitmentType("REPLACEMENT")} className="w-4 h-4 text-blue-600 accent-blue-600" />
-                <div><div className="text-sm font-medium text-slate-900">Thay thế (REPLACEMENT)</div><div className="text-xs text-slate-500">Thay thế nhân sự nghỉ việc</div></div>
+                <div><div className="text-sm font-medium text-slate-900 dark:text-white">Thay thế (REPLACEMENT)</div><div className="text-xs text-slate-500 dark:text-slate-400">Thay thế nhân sự nghỉ việc</div></div>
               </label>
             </div>
           </div>
 
           <div>
-            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">Vị trí <span className="text-red-500">*</span></label>
-            <input id="positionName" type="text" value={positionName} onChange={(e) => setPositionName(e.target.value)} placeholder="VD: Backend Developer, Product Manager..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
+            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Vị trí <span className="text-red-500">*</span></label>
+            <input id="positionName" type="text" value={positionName} onChange={(e) => setPositionName(e.target.value)} placeholder="VD: Backend Developer, Product Manager..." className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500" />
           </div>
 
           <div>
-            <label htmlFor="level" className="block text-sm font-medium text-slate-700 mb-1.5">Level <span className="text-red-500">*</span></label>
-            <select id="level" value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer">
+            <label htmlFor="level" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Level <span className="text-red-500">*</span></label>
+            <select id="level" value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 cursor-pointer">
               <option value="">-- Chọn level --</option>
               {LEVELS.map((l) => (<option key={l.value} value={l.value}>{l.label}</option>))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1.5">Số lượng <span className="text-red-500">*</span></label>
+            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Số lượng <span className="text-red-500">*</span></label>
             <input id="quantity" type="number" min={1} value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500" />
           </div>
 
           <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1.5">Lý do tuyển <span className="text-red-500">*</span></label>
-            <textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Mô tả lý do cần tuyển dụng..." rows={4} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none" />
+            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Lý do tuyển <span className="text-red-500">*</span></label>
+            <textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Mô tả lý do cần tuyển dụng..." rows={4} className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 resize-none" />
           </div>
 
           <div>
-            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 mb-1.5">JD URL <span className="text-slate-400 text-xs font-normal">(không bắt buộc)</span></label>
-            <input id="jdUrl" type="text" value={jdUrl} onChange={(e) => setJdUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
+            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">JD URL <span className="text-slate-400 dark:text-slate-500 text-xs font-normal">(không bắt buộc)</span></label>
+            <input id="jdUrl" type="text" value={jdUrl} onChange={(e) => setJdUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500" />
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-slate-100">
-          <button onClick={handleSave} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 disabled:bg-slate-100 text-slate-700 font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
+        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-slate-100 dark:border-slate-700">
+          <button onClick={handleSave} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:bg-slate-100 dark:disabled:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
             {submitting ? <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" /> : <><Save className="w-5 h-5" />Lưu</>}
           </button>
           <button onClick={handleSaveAndResubmit} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
@@ -260,7 +260,7 @@ export default function EditOrderPage() {
         </div>
 
         <div className="text-center mt-4">
-          <button onClick={() => router.push(`/orders/${id}`)} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer transition-colors">Hủy bỏ</button>
+          <button onClick={() => router.push(`/orders/${id}`)} className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer transition-colors">Hủy bỏ</button>
         </div>
       </div>
     </div>
