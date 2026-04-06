@@ -41,24 +41,24 @@ function ViewModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div className="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">{template.positionName}</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{template.positionName}</h3>
             <div className="flex items-center gap-2 mt-1">
               {template.level && (
-                <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">
+                <span className="text-xs px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full font-medium">
                   {template.level}
                 </span>
               )}
-              <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-medium">
+              <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded-full font-medium">
                 {template.venture.code}
               </span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -67,11 +67,11 @@ function ViewModal({
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {template.jdContent && (
             <div>
-              <h4 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-slate-400" />
                 Nội dung JD
               </h4>
-              <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+              <div className="bg-slate-50 dark:bg-slate-700 rounded-xl p-4 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
                 {template.jdContent}
               </div>
             </div>
@@ -79,18 +79,18 @@ function ViewModal({
 
           {template.candidateProfile && (
             <div>
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">Hồ sơ ứng viên</h4>
-              <div className="bg-amber-50 rounded-xl p-4 text-sm text-amber-800 whitespace-pre-wrap leading-relaxed">
+              <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Hồ sơ ứng viên</h4>
+              <div className="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-4 text-sm text-amber-800 dark:text-amber-300 whitespace-pre-wrap leading-relaxed">
                 {template.candidateProfile}
               </div>
             </div>
           )}
         </div>
 
-        <div className="px-6 py-4 border-t border-slate-100">
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
           <button
             onClick={onClose}
-            className="w-full px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors"
+            className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl cursor-pointer transition-colors"
           >
             Đóng
           </button>
@@ -170,14 +170,14 @@ function FormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h3 className="text-lg font-semibold text-slate-900">
+      <div className="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
             {isEdit ? "Chỉnh sửa JD Template" : "Tạo JD Template mới"}
           </h3>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -185,13 +185,13 @@ function FormModal({
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
               Venture <span className="text-red-500">*</span>
             </label>
             <select
               value={ventureId}
               onChange={(e) => setVentureId(e.target.value)}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer"
+              className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 cursor-pointer"
             >
               <option value="">Chọn venture...</option>
               {ventures.map((v) => (
@@ -204,7 +204,7 @@ function FormModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Vị trí <span className="text-red-500">*</span>
               </label>
               <input
@@ -212,16 +212,16 @@ function FormModal({
                 value={positionName}
                 onChange={(e) => setPositionName(e.target.value)}
                 placeholder="VD: Backend Developer, Product Manager..."
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
+                className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Level</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Level</label>
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer"
+                className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 cursor-pointer"
               >
                 <option value="">-- Chọn level --</option>
                 <option value="Junior">Junior</option>
@@ -234,7 +234,7 @@ function FormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
               Nội dung JD <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -242,12 +242,12 @@ function FormModal({
               onChange={(e) => setJdContent(e.target.value)}
               placeholder="Mô tả công việc, yêu cầu, quyền lợi..."
               rows={10}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none font-mono text-sm"
+              className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 resize-none font-mono text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
               Hồ sơ ứng viên
             </label>
             <textarea
@@ -255,7 +255,7 @@ function FormModal({
               onChange={(e) => setCandidateProfile(e.target.value)}
               placeholder="Mô tả ứng viên lý tưởng..."
               rows={3}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none"
+              className="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 resize-none"
             />
           </div>
 
@@ -263,7 +263,7 @@ function FormModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors"
+              className="flex-1 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl cursor-pointer transition-colors"
             >
               Hủy
             </button>
@@ -397,18 +397,18 @@ export default function JDRepositoryPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <div className="h-8 w-48 bg-slate-200 rounded-lg animate-pulse" />
-            <div className="h-4 w-64 bg-slate-200 rounded-lg animate-pulse mt-2" />
+            <div className="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse" />
+            <div className="h-4 w-64 bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse mt-2" />
           </div>
-          <div className="h-12 w-40 bg-slate-200 rounded-xl animate-pulse" />
+          <div className="h-12 w-40 bg-slate-200 dark:bg-slate-700 rounded-xl animate-pulse" />
         </div>
-        <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+        <div className="h-12 bg-slate-200 dark:bg-slate-700 rounded-xl animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-slate-200 p-5">
-              <div className="h-5 w-32 bg-slate-200 rounded animate-pulse mb-3" />
-              <div className="h-4 w-full bg-slate-200 rounded animate-pulse mb-2" />
-              <div className="h-4 w-3/4 bg-slate-200 rounded animate-pulse" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+              <div className="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-3" />
+              <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-2" />
+              <div className="h-4 w-3/4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
             </div>
           ))}
         </div>
@@ -421,8 +421,8 @@ export default function JDRepositoryPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">JD Repository</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">JD Repository</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             {templates.length} JD template có sẵn
           </p>
         </div>
@@ -445,7 +445,7 @@ export default function JDRepositoryPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Tìm kiếm theo tên vị trí..."
-          className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 transition-colors"
+          className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 transition-colors"
         />
       </div>
 
@@ -455,25 +455,25 @@ export default function JDRepositoryPage() {
           {templates.map((template) => (
             <div
               key={template.id}
-              className="bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition-all group"
+              className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all group"
             >
               {/* Card header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
+                  <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
                     <BookOpen className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-slate-900 truncate">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                       {template.positionName}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       {template.level && (
-                        <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">
+                        <span className="text-xs px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full font-medium">
                           {template.level}
                         </span>
                       )}
-                      <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-medium flex items-center gap-1">
+                      <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded-full font-medium flex items-center gap-1">
                         <Building2 className="w-3 h-3" />
                         {template.venture.code}
                       </span>
@@ -483,15 +483,15 @@ export default function JDRepositoryPage() {
               </div>
 
               {/* Content preview */}
-              <p className="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-3">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
                 {getContentPreview(template.jdContent)}
               </p>
 
               {/* Card actions */}
-              <div className="flex items-center gap-1.5 pt-3 border-t border-slate-100">
+              <div className="flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-700">
                 <button
                   onClick={() => setViewTemplate(template)}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg cursor-pointer transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   Xem
@@ -500,7 +500,7 @@ export default function JDRepositoryPage() {
                   <>
                     <button
                       onClick={() => setEditTemplate(template)}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-amber-600 hover:bg-amber-50 rounded-lg cursor-pointer transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg cursor-pointer transition-colors"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       Sửa
@@ -508,7 +508,7 @@ export default function JDRepositoryPage() {
                     <button
                       onClick={() => handleDelete(template.id)}
                       disabled={deleteLoading === template.id}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg cursor-pointer transition-colors disabled:opacity-50"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       Xóa
@@ -522,11 +522,11 @@ export default function JDRepositoryPage() {
       ) : (
         !loading && (
           <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-medium text-slate-900 mb-1">
+            <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-1">
               {search ? "Không tìm thấy JD template" : "Chưa có JD template nào"}
             </h3>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
               {search
                 ? "Thử thay đổi từ khóa tìm kiếm"
                 : "Hãy tạo JD template đầu tiên"}

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, LogIn, Building2, AlertCircle } from "lucide-react";
 
 const ROLE_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  HIRING_MANAGER: { label: "Hiring Manager", color: "text-blue-700", bg: "bg-blue-50 border-blue-200" },
-  CEO_VENTURE: { label: "CEO Venture", color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
-  CEO_GROUP: { label: "CEO Group", color: "text-purple-700", bg: "bg-purple-50 border-purple-200" },
-  HR: { label: "HR Officer", color: "text-amber-700", bg: "bg-amber-50 border-amber-200" },
+  HIRING_MANAGER: { label: "Hiring Manager", color: "text-blue-700 dark:text-blue-400", bg: "bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800" },
+  CEO_VENTURE: { label: "CEO Venture", color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:border-emerald-800" },
+  CEO_GROUP: { label: "CEO Group", color: "text-purple-700 dark:text-purple-400", bg: "bg-purple-50 border-purple-200 dark:bg-purple-900/30 dark:border-purple-800" },
+  HR: { label: "HR Officer", color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-800" },
 };
 
 const TEST_ACCOUNTS = [
@@ -109,27 +109,27 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-slate-50">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-slate-50 dark:bg-slate-900">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 justify-center mb-4">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
               <Building2 className="w-6 h-6 text-white" />
             </div>
-            <span className="font-semibold text-lg text-slate-800">Apero HR</span>
+            <span className="font-semibold text-lg text-slate-800 dark:text-slate-100">Apero HR</span>
           </div>
 
           {/* Header */}
           <div className="text-center lg:text-left">
-            <h2 className="text-2xl font-bold text-slate-900">Đăng nhập</h2>
-            <p className="mt-2 text-slate-500">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Đăng nhập</h2>
+            <p className="mt-2 text-slate-500 dark:text-slate-400">
               Nhập email và mật khẩu để truy cập hệ thống
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+            <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm dark:bg-red-900/30 dark:border-red-800 dark:text-red-400">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -138,7 +138,7 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Email
               </label>
               <input
@@ -148,12 +148,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@apero.vn"
                 required
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 dark:hover:border-slate-600"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -164,12 +164,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Nhập mật khẩu"
                   required
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 pr-12"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 pr-12 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500 dark:hover:border-slate-600"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 p-1"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -196,10 +196,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
+              <div className="w-full border-t border-slate-200 dark:border-slate-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-slate-50 text-slate-400">Tài khoản test</span>
+              <span className="px-3 bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500">Tài khoản test</span>
             </div>
           </div>
 
@@ -216,7 +216,7 @@ export default function LoginPage() {
                   <div className={`text-sm font-semibold ${roleInfo.color}`}>
                     {roleInfo.label}
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5 truncate">
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                     {account.email}
                   </div>
                 </button>
@@ -224,8 +224,8 @@ export default function LoginPage() {
             })}
           </div>
 
-          <p className="text-center text-xs text-slate-400">
-            Mật khẩu mặc định: <code className="bg-slate-200/60 px-1.5 py-0.5 rounded text-slate-600">test123</code>
+          <p className="text-center text-xs text-slate-400 dark:text-slate-500">
+            Mật khẩu mặc định: <code className="bg-slate-200/60 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">test123</code>
           </p>
         </div>
       </div>

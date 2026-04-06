@@ -144,8 +144,8 @@ export default function OrdersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Orders</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Orders</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             {pagination ? `Tổng cộng ${pagination.total} orders` : "Loading..."}
           </p>
         </div>
@@ -169,7 +169,7 @@ export default function OrdersPage() {
             placeholder="Tìm theo vị trí, level, người tạo..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500"
           />
         </div>
         <select
@@ -178,7 +178,7 @@ export default function OrdersPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer"
+          className="px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 cursor-pointer"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -189,28 +189,28 @@ export default function OrdersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         {loading ? (
           <div className="p-8">
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="h-5 w-8 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-40 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-16 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-10 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-20 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-20 bg-slate-200 rounded animate-pulse" />
-                  <div className="h-5 w-24 bg-slate-200 rounded animate-pulse" />
+                  <div className="h-5 w-8 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-40 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-16 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-10 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-20 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-20 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                  <div className="h-5 w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
                 </div>
               ))}
             </div>
           </div>
         ) : filteredOrders.length === 0 ? (
           <div className="p-12 text-center">
-            <FileX className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-medium text-slate-900 mb-1">Chưa có order nào</h3>
-            <p className="text-slate-500 text-sm">
+            <FileX className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-1">Chưa có order nào</h3>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
               {user?.role === "HIRING_MANAGER"
                 ? "Hãy tạo order tuyển dụng đầu tiên của bạn"
                 : "Chưa có order nào phù hợp với bộ lọc"}
@@ -229,19 +229,19 @@ export default function OrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">#</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Vị trí</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Level</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase">SL</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Loại</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">HC Check</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Trạng thái</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Ngày tạo</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Thao tác</th>
+                <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">#</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Vị trí</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Level</th>
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">SL</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Loại</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">HC Check</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Trạng thái</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Ngày tạo</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Thao tác</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {filteredOrders.map((order, index) => {
                   const statusInfo = STATUS_CONFIG[order.status] || {
                     label: order.status,
@@ -255,19 +255,19 @@ export default function OrdersPage() {
                   const rowNumber = ((pagination?.page || 1) - 1) * 20 + index + 1;
 
                   return (
-                    <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-4 py-3 text-sm text-slate-500">{rowNumber}</td>
+                    <tr key={order.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">{rowNumber}</td>
                       <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-slate-900">{order.positionName}</div>
-                        <div className="text-xs text-slate-500">{order.hiringManager.fullName}</div>
+                        <div className="text-sm font-medium text-slate-900 dark:text-white">{order.positionName}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">{order.hiringManager.fullName}</div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-600">{order.level}</td>
-                      <td className="px-4 py-3 text-sm text-slate-600 text-center">{order.quantity}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{order.level}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 text-center">{order.quantity}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-block text-xs px-2 py-1 rounded-full font-medium ${
                           order.recruitmentType === "NEW"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-orange-50 text-orange-700"
+                            ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : "bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
                         }`}>
                           {order.recruitmentType === "NEW" ? "Mới" : "Thay thế"}
                         </span>
@@ -279,7 +279,7 @@ export default function OrdersPage() {
                             {hcInfo.label}
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400">--</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500">--</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -287,12 +287,12 @@ export default function OrdersPage() {
                           {statusInfo.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-500">{formatDate(order.createdAt)}</td>
+                      <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">{formatDate(order.createdAt)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => router.push(`/orders/${order.id}`)}
-                            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg cursor-pointer transition-colors"
                             title="Xem chi tiết"
                           >
                             <Eye className="w-4 h-4" />
@@ -304,7 +304,7 @@ export default function OrdersPage() {
                                 {(order.status === "DRAFT" || order.status === "REJECTED") && (
                                   <button
                                     onClick={() => router.push(`/orders/${order.id}/edit`)}
-                                    className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg cursor-pointer transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg cursor-pointer transition-colors"
                                     title="Chỉnh sửa"
                                   >
                                     <Pencil className="w-4 h-4" />
@@ -313,7 +313,7 @@ export default function OrdersPage() {
                                 {order.status === "DRAFT" && (
                                   <button
                                     onClick={() => handleSubmit(order.id)}
-                                    className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg cursor-pointer transition-colors"
+                                    className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg cursor-pointer transition-colors"
                                     title="Gửi duyệt"
                                   >
                                     <Send className="w-4 h-4" />
@@ -333,22 +333,22 @@ export default function OrdersPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-            <p className="text-sm text-slate-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-700">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Trang {pagination.page} / {pagination.totalPages} ({pagination.total} kết quả)
             </p>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 dark:hover:text-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                 disabled={page === pagination.totalPages}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 dark:hover:text-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

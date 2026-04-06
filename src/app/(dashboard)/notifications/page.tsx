@@ -25,12 +25,12 @@ interface NotificationItem {
 }
 
 const NOTIF_ICONS: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string; bg: string }> = {
-  HC_OVER_ALERT: { icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-50" },
-  APPROVAL_REQUEST: { icon: CheckSquare, color: "text-blue-600", bg: "bg-blue-50" },
-  REJECTION_NOTICE: { icon: XCircle, color: "text-red-600", bg: "bg-red-50" },
-  ORDER_APPROVED: { icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-  ORDER_CANCELLED: { icon: Ban, color: "text-slate-600", bg: "bg-slate-100" },
-  APPROVAL_REMINDER: { icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
+  HC_OVER_ALERT: { icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-900/30" },
+  APPROVAL_REQUEST: { icon: CheckSquare, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-900/30" },
+  REJECTION_NOTICE: { icon: XCircle, color: "text-red-600", bg: "bg-red-50 dark:bg-red-900/30" },
+  ORDER_APPROVED: { icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-900/30" },
+  ORDER_CANCELLED: { icon: Ban, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-100 dark:bg-slate-700" },
+  APPROVAL_REMINDER: { icon: Clock, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-900/30" },
 };
 
 function getRelativeTime(dateStr: string): string {
@@ -102,11 +102,11 @@ export default function NotificationsPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Thông báo</h2>
-          <p className="text-slate-500 text-sm mt-1">{total} thông báo</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Thông báo</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{total} thông báo</p>
         </div>
         {unreadCount > 0 && (
-          <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer text-sm transition-colors">
+          <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl cursor-pointer text-sm transition-colors">
             <CheckCheck className="w-4 h-4" />Đánh dấu tất cả đã đọc
           </button>
         )}
@@ -115,20 +115,20 @@ export default function NotificationsPage() {
       {loading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 flex gap-3">
-              <div className="w-9 h-9 bg-slate-200 rounded-lg animate-pulse" />
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex gap-3">
+              <div className="w-9 h-9 bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 bg-slate-200 rounded animate-pulse" />
-                <div className="h-3 w-1/4 bg-slate-200 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
+                <div className="h-3 w-1/4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
               </div>
             </div>
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-slate-900 mb-1">Chưa có thông báo</h3>
-          <p className="text-slate-500 text-sm">Bạn sẽ nhận được thông báo khi có cập nhật về order</p>
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <Bell className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-1">Chưa có thông báo</h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Bạn sẽ nhận được thông báo khi có cập nhật về order</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -140,16 +140,16 @@ export default function NotificationsPage() {
               <div
                 key={notif.id}
                 onClick={() => handleMarkRead(notif.id, notif.orderId)}
-                className={`bg-white rounded-xl border p-4 flex items-start gap-3 cursor-pointer transition-colors hover:bg-slate-50 ${!notif.isRead ? "border-blue-200 bg-blue-50/30" : "border-slate-200"}`}
+                className={`bg-white dark:bg-slate-800 rounded-xl border p-4 flex items-start gap-3 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 ${!notif.isRead ? "border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/20" : "border-slate-200 dark:border-slate-700"}`}
               >
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${config.bg}`}>
                   <Icon className={`w-4 h-4 ${config.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm ${!notif.isRead ? "font-semibold text-slate-900" : "text-slate-700"}`}>
+                  <p className={`text-sm ${!notif.isRead ? "font-semibold text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-300"}`}>
                     {notif.content || "Thông báo mới"}
                   </p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                     {notif.sentAt ? getRelativeTime(notif.sentAt) : ""}
                   </p>
                 </div>
@@ -165,15 +165,15 @@ export default function NotificationsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Trang trước
               </button>
-              <span className="text-sm text-slate-500">Trang {page}</span>
+              <span className="text-sm text-slate-500 dark:text-slate-400">Trang {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={notifications.length < 20}
-                className="px-4 py-2 text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Trang sau
               </button>
