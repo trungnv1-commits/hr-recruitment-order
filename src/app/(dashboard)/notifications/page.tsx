@@ -41,10 +41,10 @@ function getRelativeTime(dateStr: string): string {
   const diffHour = Math.floor(diffMs / 3600000);
   const diffDay = Math.floor(diffMs / 86400000);
 
-  if (diffMin < 1) return "V\u1eeba xong";
-  if (diffMin < 60) return `${diffMin} ph\u00fat tr\u01b0\u1edbc`;
-  if (diffHour < 24) return `${diffHour} gi\u1edd tr\u01b0\u1edbc`;
-  if (diffDay < 7) return `${diffDay} ng\u00e0y tr\u01b0\u1edbc`;
+  if (diffMin < 1) return "Vừa xong";
+  if (diffMin < 60) return `${diffMin} phút trước`;
+  if (diffHour < 24) return `${diffHour} giờ trước`;
+  if (diffDay < 7) return `${diffDay} ngày trước`;
   return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
@@ -65,7 +65,7 @@ export default function NotificationsPage() {
         setTotal(data.total || 0);
       }
     } catch {
-      toast.error("L\u1ed7i t\u1ea3i th\u00f4ng b\u00e1o");
+      toast.error("Lỗi tải thông báo");
     } finally {
       setLoading(false);
     }
@@ -90,9 +90,9 @@ export default function NotificationsPage() {
         unread.map((n) => fetch(`/api/notifications/${n.id}/read`, { method: "PATCH" }))
       );
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-      toast.success("\u0110\u00e3 \u0111\u00e1nh d\u1ea5u t\u1ea5t c\u1ea3 \u0111\u00e3 \u0111\u1ecdc");
+      toast.success("Đã đánh dấu tất cả đã đọc");
     } catch {
-      toast.error("L\u1ed7i \u0111\u00e1nh d\u1ea5u \u0111\u00e3 \u0111\u1ecdc");
+      toast.error("Lỗi đánh dấu đã đọc");
     }
   };
 
@@ -102,12 +102,12 @@ export default function NotificationsPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Th\u00f4ng b\u00e1o</h2>
-          <p className="text-slate-500 text-sm mt-1">{total} th\u00f4ng b\u00e1o</p>
+          <h2 className="text-2xl font-bold text-slate-900">Thông báo</h2>
+          <p className="text-slate-500 text-sm mt-1">{total} thông báo</p>
         </div>
         {unreadCount > 0 && (
           <button onClick={handleMarkAllRead} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer text-sm transition-colors">
-            <CheckCheck className="w-4 h-4" />\u0110\u00e1nh d\u1ea5u t\u1ea5t c\u1ea3 \u0111\u00e3 \u0111\u1ecdc
+            <CheckCheck className="w-4 h-4" />Đánh dấu tất cả đã đọc
           </button>
         )}
       </div>
@@ -127,8 +127,8 @@ export default function NotificationsPage() {
       ) : notifications.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
           <Bell className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-slate-900 mb-1">Ch\u01b0a c\u00f3 th\u00f4ng b\u00e1o</h3>
-          <p className="text-slate-500 text-sm">B\u1ea1n s\u1ebd nh\u1eadn \u0111\u01b0\u1ee3c th\u00f4ng b\u00e1o khi c\u00f3 c\u1eadp nh\u1eadt v\u1ec1 order</p>
+          <h3 className="text-lg font-medium text-slate-900 mb-1">Chưa có thông báo</h3>
+          <p className="text-slate-500 text-sm">Bạn sẽ nhận được thông báo khi có cập nhật về order</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -147,7 +147,7 @@ export default function NotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm ${!notif.isRead ? "font-semibold text-slate-900" : "text-slate-700"}`}>
-                    {notif.content || "Th\u00f4ng b\u00e1o m\u1edbi"}
+                    {notif.content || "Thông báo mới"}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     {notif.sentAt ? getRelativeTime(notif.sentAt) : ""}
@@ -167,7 +167,7 @@ export default function NotificationsPage() {
                 disabled={page === 1}
                 className="px-4 py-2 text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                Trang tr\u01b0\u1edbc
+                Trang trước
               </button>
               <span className="text-sm text-slate-500">Trang {page}</span>
               <button

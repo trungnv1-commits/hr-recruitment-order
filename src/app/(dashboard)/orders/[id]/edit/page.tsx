@@ -63,7 +63,7 @@ export default function EditOrderPage() {
       .then((data) => {
         if (data.user) {
           if (data.user.role !== "HIRING_MANAGER") {
-            toast.error("Ch\u1ec9 Hiring Manager m\u1edbi \u0111\u01b0\u1ee3c ch\u1ec9nh s\u1eeda order");
+            toast.error("Chỉ Hiring Manager mới được chỉnh sửa order");
             router.push("/orders");
             return;
           }
@@ -83,12 +83,12 @@ export default function EditOrderPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.hiringManagerId !== user.userId) {
-          toast.error("B\u1ea1n kh\u00f4ng c\u00f3 quy\u1ec1n ch\u1ec9nh s\u1eeda order n\u00e0y");
+          toast.error("Bạn không có quyền chỉnh sửa order này");
           router.push("/orders");
           return;
         }
         if (!["DRAFT", "REJECTED"].includes(data.status)) {
-          toast.error("Ch\u1ec9 c\u00f3 th\u1ec3 ch\u1ec9nh s\u1eeda order \u1edf tr\u1ea1ng th\u00e1i Nh\u00e1p ho\u1eb7c T\u1eeb ch\u1ed1i");
+          toast.error("Chỉ có thể chỉnh sửa order ở trạng thái Nháp hoặc Từ chối");
           router.push(`/orders/${id}`);
           return;
         }
@@ -100,11 +100,11 @@ export default function EditOrderPage() {
         setReason(data.reason);
         setJdUrl(data.jdAttachmentUrl || "");
       } else {
-        toast.error("Kh\u00f4ng th\u1ec3 t\u1ea3i th\u00f4ng tin order");
+        toast.error("Không thể tải thông tin order");
         router.push("/orders");
       }
     } catch {
-      toast.error("L\u1ed7i k\u1ebft n\u1ed1i server");
+      toast.error("Lỗi kết nối server");
     } finally {
       setLoading(false);
     }
@@ -113,10 +113,10 @@ export default function EditOrderPage() {
   useEffect(() => { if (user) fetchOrder(); }, [user, fetchOrder]);
 
   const validateForm = (): boolean => {
-    if (!positionName.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp t\u00ean v\u1ecb tr\u00ed"); return false; }
-    if (!level) { toast.error("Vui l\u00f2ng ch\u1ecdn level"); return false; }
-    if (quantity < 1) { toast.error("S\u1ed1 l\u01b0\u1ee3ng ph\u1ea3i l\u1edbn h\u01a1n 0"); return false; }
-    if (!reason.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp l\u00fd do tuy\u1ec3n d\u1ee5ng"); return false; }
+    if (!positionName.trim()) { toast.error("Vui lòng nhập tên vị trí"); return false; }
+    if (!level) { toast.error("Vui lòng chọn level"); return false; }
+    if (quantity < 1) { toast.error("Số lượng phải lớn hơn 0"); return false; }
+    if (!reason.trim()) { toast.error("Vui lòng nhập lý do tuyển dụng"); return false; }
     return true;
   };
 
@@ -128,7 +128,7 @@ export default function EditOrderPage() {
     });
     if (!res.ok) {
       const data = await res.json();
-      throw new Error(data.error || "C\u1eadp nh\u1eadt th\u1ea5t b\u1ea1i");
+      throw new Error(data.error || "Cập nhật thất bại");
     }
     return res.json();
   };
@@ -138,10 +138,10 @@ export default function EditOrderPage() {
     setSubmitting(true);
     try {
       await updateOrder();
-      toast.success("C\u1eadp nh\u1eadt th\u00e0nh c\u00f4ng!");
+      toast.success("Cập nhật thành công!");
       router.push(`/orders/${id}`);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "L\u1ed7i c\u1eadp nh\u1eadt");
+      toast.error(error instanceof Error ? error.message : "Lỗi cập nhật");
     } finally {
       setSubmitting(false);
     }
@@ -155,12 +155,12 @@ export default function EditOrderPage() {
       const submitRes = await fetch(`/api/orders/${id}/submit`, { method: "POST" });
       if (!submitRes.ok) {
         const data = await submitRes.json();
-        throw new Error(data.error || "G\u1eedi duy\u1ec7t th\u1ea5t b\u1ea1i");
+        throw new Error(data.error || "Gửi duyệt thất bại");
       }
-      toast.success("C\u1eadp nh\u1eadt v\u00e0 g\u1eedi duy\u1ec7t th\u00e0nh c\u00f4ng!");
+      toast.success("Cập nhật và gửi duyệt thành công!");
       router.push(`/orders/${id}`);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "L\u1ed7i g\u1eedi duy\u1ec7t");
+      toast.error(error instanceof Error ? error.message : "Lỗi gửi duyệt");
     } finally {
       setSubmitting(false);
     }
@@ -188,7 +188,7 @@ export default function EditOrderPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <button onClick={() => router.push(`/orders/${id}`)} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm cursor-pointer transition-colors">
-        <ArrowLeft className="w-4 h-4" />Quay l\u1ea1i chi ti\u1ebft order
+        <ArrowLeft className="w-4 h-4" />Quay lại chi tiết order
       </button>
 
       {order.status === "REJECTED" && rejectionRecord && (
@@ -196,8 +196,8 @@ export default function EditOrderPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Order b\u1ecb t\u1eeb ch\u1ed1i</h3>
-              <p className="text-sm text-red-700 mt-1">B\u1edfi: {rejectionRecord.approver.fullName}</p>
+              <h3 className="text-sm font-semibold text-red-900">Order bị từ chối</h3>
+              <p className="text-sm text-red-700 mt-1">Bởi: {rejectionRecord.approver.fullName}</p>
               {rejectionRecord.comment && <p className="text-sm text-red-700 mt-1 font-medium">{rejectionRecord.comment}</p>}
             </div>
           </div>
@@ -205,62 +205,62 @@ export default function EditOrderPage() {
       )}
 
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-6">Ch\u1ec9nh s\u1eeda Order</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-6">Chỉnh sửa Order</h2>
         <div className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Lo\u1ea1i tuy\u1ec3n <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Loại tuyển <span className="text-red-500">*</span></label>
             <div className="flex gap-4">
               <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "NEW" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
                 <input type="radio" name="recruitmentType" value="NEW" checked={recruitmentType === "NEW"} onChange={() => setRecruitmentType("NEW")} className="w-4 h-4 text-blue-600 accent-blue-600" />
-                <div><div className="text-sm font-medium text-slate-900">Tuy\u1ec3n m\u1edbi (NEW)</div><div className="text-xs text-slate-500">V\u1ecb tr\u00ed m\u1edbi trong k\u1ebf ho\u1ea1ch</div></div>
+                <div><div className="text-sm font-medium text-slate-900">Tuyển mới (NEW)</div><div className="text-xs text-slate-500">Vị trí mới trong kế hoạch</div></div>
               </label>
               <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "REPLACEMENT" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
                 <input type="radio" name="recruitmentType" value="REPLACEMENT" checked={recruitmentType === "REPLACEMENT"} onChange={() => setRecruitmentType("REPLACEMENT")} className="w-4 h-4 text-blue-600 accent-blue-600" />
-                <div><div className="text-sm font-medium text-slate-900">Thay th\u1ebf (REPLACEMENT)</div><div className="text-xs text-slate-500">Thay th\u1ebf nh\u00e2n s\u1ef1 ngh\u1ec9 vi\u1ec7c</div></div>
+                <div><div className="text-sm font-medium text-slate-900">Thay thế (REPLACEMENT)</div><div className="text-xs text-slate-500">Thay thế nhân sự nghỉ việc</div></div>
               </label>
             </div>
           </div>
 
           <div>
-            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">V\u1ecb tr\u00ed <span className="text-red-500">*</span></label>
+            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">Vị trí <span className="text-red-500">*</span></label>
             <input id="positionName" type="text" value={positionName} onChange={(e) => setPositionName(e.target.value)} placeholder="VD: Backend Developer, Product Manager..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
           </div>
 
           <div>
             <label htmlFor="level" className="block text-sm font-medium text-slate-700 mb-1.5">Level <span className="text-red-500">*</span></label>
             <select id="level" value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer">
-              <option value="">-- Ch\u1ecdn level --</option>
+              <option value="">-- Chọn level --</option>
               {LEVELS.map((l) => (<option key={l.value} value={l.value}>{l.label}</option>))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1.5">S\u1ed1 l\u01b0\u1ee3ng <span className="text-red-500">*</span></label>
+            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1.5">Số lượng <span className="text-red-500">*</span></label>
             <input id="quantity" type="number" min={1} value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500" />
           </div>
 
           <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1.5">L\u00fd do tuy\u1ec3n <span className="text-red-500">*</span></label>
-            <textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="M\u00f4 t\u1ea3 l\u00fd do c\u1ea7n tuy\u1ec3n d\u1ee5ng..." rows={4} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none" />
+            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1.5">Lý do tuyển <span className="text-red-500">*</span></label>
+            <textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Mô tả lý do cần tuyển dụng..." rows={4} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none" />
           </div>
 
           <div>
-            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 mb-1.5">JD URL <span className="text-slate-400 text-xs font-normal">(kh\u00f4ng b\u1eaft bu\u1ed9c)</span></label>
+            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 mb-1.5">JD URL <span className="text-slate-400 text-xs font-normal">(không bắt buộc)</span></label>
             <input id="jdUrl" type="text" value={jdUrl} onChange={(e) => setJdUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-slate-100">
           <button onClick={handleSave} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 disabled:bg-slate-100 text-slate-700 font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
-            {submitting ? <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" /> : <><Save className="w-5 h-5" />L\u01b0u</>}
+            {submitting ? <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" /> : <><Save className="w-5 h-5" />Lưu</>}
           </button>
           <button onClick={handleSaveAndResubmit} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
-            {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-5 h-5" />L\u01b0u & G\u1eedi l\u1ea1i</>}
+            {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-5 h-5" />Lưu & Gửi lại</>}
           </button>
         </div>
 
         <div className="text-center mt-4">
-          <button onClick={() => router.push(`/orders/${id}`)} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer transition-colors">H\u1ee7y b\u1ecf</button>
+          <button onClick={() => router.push(`/orders/${id}`)} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer transition-colors">Hủy bỏ</button>
         </div>
       </div>
     </div>

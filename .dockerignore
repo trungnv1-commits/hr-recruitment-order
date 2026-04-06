@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.claude
+*.md
+.env*
+.gitignore
+tsconfig.tsbuildinfo
+next-env.d.ts

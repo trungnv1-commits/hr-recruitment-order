@@ -96,11 +96,11 @@ export default function OrderDetailPage() {
       if (res.ok) {
         setOrder(await res.json());
       } else {
-        toast.error("Kh\u00f4ng th\u1ec3 t\u1ea3i th\u00f4ng tin order");
+        toast.error("Không thể tải thông tin order");
         router.push("/orders");
       }
     } catch {
-      toast.error("L\u1ed7i k\u1ebft n\u1ed1i server");
+      toast.error("Lỗi kết nối server");
     } finally {
       setLoading(false);
     }
@@ -109,13 +109,13 @@ export default function OrderDetailPage() {
   useEffect(() => { if (user) fetchOrder(); }, [user, fetchOrder]);
 
   const handleSubmit = async () => {
-    if (!confirm("B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n g\u1eedi duy\u1ec7t order n\u00e0y?")) return;
+    if (!confirm("Bạn có chắc muốn gửi duyệt order này?")) return;
     setActionLoading(true);
     try {
       const res = await fetch(`/api/orders/${id}/submit`, { method: "POST" });
-      if (res.ok) { toast.success("\u0110\u00e3 g\u1eedi duy\u1ec7t th\u00e0nh c\u00f4ng!"); fetchOrder(); }
-      else { const d = await res.json(); toast.error(d.error || "G\u1eedi duy\u1ec7t th\u1ea5t b\u1ea1i"); }
-    } catch { toast.error("L\u1ed7i k\u1ebft n\u1ed1i server"); }
+      if (res.ok) { toast.success("Đã gửi duyệt thành công!"); fetchOrder(); }
+      else { const d = await res.json(); toast.error(d.error || "Gửi duyệt thất bại"); }
+    } catch { toast.error("Lỗi kết nối server"); }
     finally { setActionLoading(false); }
   };
 
@@ -126,37 +126,37 @@ export default function OrderDetailPage() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment: approveComment || null }),
       });
-      if (res.ok) { toast.success("\u0110\u00e3 duy\u1ec7t th\u00e0nh c\u00f4ng!"); setShowApproveForm(false); setApproveComment(""); fetchOrder(); }
-      else { const d = await res.json(); toast.error(d.error || "Duy\u1ec7t th\u1ea5t b\u1ea1i"); }
-    } catch { toast.error("L\u1ed7i k\u1ebft n\u1ed1i server"); }
+      if (res.ok) { toast.success("Đã duyệt thành công!"); setShowApproveForm(false); setApproveComment(""); fetchOrder(); }
+      else { const d = await res.json(); toast.error(d.error || "Duyệt thất bại"); }
+    } catch { toast.error("Lỗi kết nối server"); }
     finally { setActionLoading(false); }
   };
 
   const handleReject = async () => {
-    if (!rejectComment.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp l\u00fd do t\u1eeb ch\u1ed1i"); return; }
+    if (!rejectComment.trim()) { toast.error("Vui lòng nhập lý do từ chối"); return; }
     setActionLoading(true);
     try {
       const res = await fetch(`/api/orders/${id}/reject`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment: rejectComment }),
       });
-      if (res.ok) { toast.success("\u0110\u00e3 t\u1eeb ch\u1ed1i order"); setShowRejectForm(false); setRejectComment(""); fetchOrder(); }
-      else { const d = await res.json(); toast.error(d.error || "T\u1eeb ch\u1ed1i th\u1ea5t b\u1ea1i"); }
-    } catch { toast.error("L\u1ed7i k\u1ebft n\u1ed1i server"); }
+      if (res.ok) { toast.success("Đã từ chối order"); setShowRejectForm(false); setRejectComment(""); fetchOrder(); }
+      else { const d = await res.json(); toast.error(d.error || "Từ chối thất bại"); }
+    } catch { toast.error("Lỗi kết nối server"); }
     finally { setActionLoading(false); }
   };
 
   const handleCancel = async () => {
-    if (!cancelReason.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp l\u00fd do h\u1ee7y"); return; }
+    if (!cancelReason.trim()) { toast.error("Vui lòng nhập lý do hủy"); return; }
     setActionLoading(true);
     try {
       const res = await fetch(`/api/orders/${id}/cancel`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason: cancelReason }),
       });
-      if (res.ok) { toast.success("\u0110\u00e3 h\u1ee7y order"); setShowCancelForm(false); setCancelReason(""); fetchOrder(); }
-      else { const d = await res.json(); toast.error(d.error || "H\u1ee7y th\u1ea5t b\u1ea1i"); }
-    } catch { toast.error("L\u1ed7i k\u1ebft n\u1ed1i server"); }
+      if (res.ok) { toast.success("Đã hủy order"); setShowCancelForm(false); setCancelReason(""); fetchOrder(); }
+      else { const d = await res.json(); toast.error(d.error || "Hủy thất bại"); }
+    } catch { toast.error("Lỗi kết nối server"); }
     finally { setActionLoading(false); }
   };
 
@@ -186,7 +186,7 @@ export default function OrderDetailPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <button onClick={() => router.push("/orders")} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm cursor-pointer transition-colors">
-        <ArrowLeft className="w-4 h-4" />Quay l\u1ea1i danh s\u00e1ch
+        <ArrowLeft className="w-4 h-4" />Quay lại danh sách
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -200,14 +200,14 @@ export default function OrderDetailPage() {
               <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${statusInfo.bg} ${statusInfo.color}`}>{statusInfo.label}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center"><Briefcase className="w-4 h-4 text-blue-600" /></div><div><p className="text-xs text-slate-500">Lo\u1ea1i tuy\u1ec3n</p><p className="text-sm font-medium text-slate-900">{order.recruitmentType === "NEW" ? "Tuy\u1ec3n m\u1edbi" : "Thay th\u1ebf"}</p></div></div>
-              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center"><Hash className="w-4 h-4 text-emerald-600" /></div><div><p className="text-xs text-slate-500">S\u1ed1 l\u01b0\u1ee3ng</p><p className="text-sm font-medium text-slate-900">{order.quantity}</p></div></div>
-              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center"><User className="w-4 h-4 text-amber-600" /></div><div><p className="text-xs text-slate-500">Ng\u01b0\u1eddi t\u1ea1o</p><p className="text-sm font-medium text-slate-900">{order.hiringManager.fullName}</p></div></div>
+              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center"><Briefcase className="w-4 h-4 text-blue-600" /></div><div><p className="text-xs text-slate-500">Loại tuyển</p><p className="text-sm font-medium text-slate-900">{order.recruitmentType === "NEW" ? "Tuyển mới" : "Thay thế"}</p></div></div>
+              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center"><Hash className="w-4 h-4 text-emerald-600" /></div><div><p className="text-xs text-slate-500">Số lượng</p><p className="text-sm font-medium text-slate-900">{order.quantity}</p></div></div>
+              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center"><User className="w-4 h-4 text-amber-600" /></div><div><p className="text-xs text-slate-500">Người tạo</p><p className="text-sm font-medium text-slate-900">{order.hiringManager.fullName}</p></div></div>
               <div className="flex items-center gap-3"><div className="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center"><Building2 className="w-4 h-4 text-purple-600" /></div><div><p className="text-xs text-slate-500">Venture</p><p className="text-sm font-medium text-slate-900">{order.venture.name}</p></div></div>
-              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center"><Calendar className="w-4 h-4 text-slate-600" /></div><div><p className="text-xs text-slate-500">Ng\u00e0y t\u1ea1o</p><p className="text-sm font-medium text-slate-900">{formatDate(order.createdAt)}</p></div></div>
+              <div className="flex items-center gap-3"><div className="w-9 h-9 bg-slate-50 rounded-lg flex items-center justify-center"><Calendar className="w-4 h-4 text-slate-600" /></div><div><p className="text-xs text-slate-500">Ngày tạo</p><p className="text-sm font-medium text-slate-900">{formatDate(order.createdAt)}</p></div></div>
               {order.jdAttachmentUrl && (<div className="flex items-center gap-3"><div className="w-9 h-9 bg-indigo-50 rounded-lg flex items-center justify-center"><FileText className="w-4 h-4 text-indigo-600" /></div><div><p className="text-xs text-slate-500">JD</p><a href={order.jdAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1">Xem JD <ExternalLink className="w-3 h-3" /></a></div></div>)}
             </div>
-            <div className="mt-5 pt-5 border-t border-slate-100"><p className="text-xs text-slate-500 mb-1">L\u00fd do tuy\u1ec3n</p><p className="text-sm text-slate-700 whitespace-pre-wrap">{order.reason}</p></div>
+            <div className="mt-5 pt-5 border-t border-slate-100"><p className="text-xs text-slate-500 mb-1">Lý do tuyển</p><p className="text-sm text-slate-700 whitespace-pre-wrap">{order.reason}</p></div>
             {hcInfo && (
               <div className="mt-5 pt-5 border-t border-slate-100">
                 <p className="text-xs text-slate-500 mb-2">HC Check</p>
@@ -222,9 +222,9 @@ export default function OrderDetailPage() {
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0"><Ban className="w-4 h-4 text-red-600" /></div>
                 <div>
-                  <h3 className="text-sm font-semibold text-red-900">Order \u0111\u00e3 b\u1ecb h\u1ee7y</h3>
-                  {order.canceller && <p className="text-sm text-red-700 mt-1">B\u1edfi: {order.canceller.fullName}</p>}
-                  {order.cancelledAt && <p className="text-sm text-red-600 mt-0.5">L\u00fac: {formatDate(order.cancelledAt)}</p>}
+                  <h3 className="text-sm font-semibold text-red-900">Order đã bị hủy</h3>
+                  {order.canceller && <p className="text-sm text-red-700 mt-1">Bởi: {order.canceller.fullName}</p>}
+                  {order.cancelledAt && <p className="text-sm text-red-600 mt-0.5">Lúc: {formatDate(order.cancelledAt)}</p>}
                   {order.cancelledReason && <p className="text-sm text-red-700 mt-2 p-3 bg-red-50 rounded-lg">{order.cancelledReason}</p>}
                 </div>
               </div>
@@ -233,32 +233,32 @@ export default function OrderDetailPage() {
 
           {showApproveForm && (
             <div className="bg-white rounded-2xl border border-emerald-200 p-6">
-              <h3 className="text-sm font-semibold text-slate-900 mb-3">Duy\u1ec7t Order</h3>
-              <textarea value={approveComment} onChange={(e) => setApproveComment(e.target.value)} placeholder="Nh\u1eadn x\u00e9t (kh\u00f4ng b\u1eaft bu\u1ed9c)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Duyệt Order</h3>
+              <textarea value={approveComment} onChange={(e) => setApproveComment(e.target.value)} placeholder="Nhận xét (không bắt buộc)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
               <div className="flex gap-3">
-                <button onClick={handleApprove} disabled={actionLoading} className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "\u0110ang x\u1eed l\u00fd..." : "X\u00e1c nh\u1eadn duy\u1ec7t"}</button>
-                <button onClick={() => { setShowApproveForm(false); setApproveComment(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">H\u1ee7y</button>
+                <button onClick={handleApprove} disabled={actionLoading} className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "Đang xử lý..." : "Xác nhận duyệt"}</button>
+                <button onClick={() => { setShowApproveForm(false); setApproveComment(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">Hủy</button>
               </div>
             </div>
           )}
           {showRejectForm && (
             <div className="bg-white rounded-2xl border border-red-200 p-6">
-              <h3 className="text-sm font-semibold text-slate-900 mb-3">T\u1eeb ch\u1ed1i Order</h3>
-              <textarea value={rejectComment} onChange={(e) => setRejectComment(e.target.value)} placeholder="L\u00fd do t\u1eeb ch\u1ed1i (b\u1eaft bu\u1ed9c)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Từ chối Order</h3>
+              <textarea value={rejectComment} onChange={(e) => setRejectComment(e.target.value)} placeholder="Lý do từ chối (bắt buộc)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
               <div className="flex gap-3">
-                <button onClick={handleReject} disabled={actionLoading} className="px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "\u0110ang x\u1eed l\u00fd..." : "X\u00e1c nh\u1eadn t\u1eeb ch\u1ed1i"}</button>
-                <button onClick={() => { setShowRejectForm(false); setRejectComment(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">H\u1ee7y</button>
+                <button onClick={handleReject} disabled={actionLoading} className="px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "Đang xử lý..." : "Xác nhận từ chối"}</button>
+                <button onClick={() => { setShowRejectForm(false); setRejectComment(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">Hủy</button>
               </div>
             </div>
           )}
           {showCancelForm && (
             <div className="bg-white rounded-2xl border border-red-200 p-6">
-              <h3 className="text-sm font-semibold text-slate-900 mb-2">H\u1ee7y Order</h3>
-              <p className="text-sm text-slate-500 mb-3">B\u1ea1n \u0111ang h\u1ee7y order <strong>{order.positionName}</strong> ({order.level}, SL: {order.quantity})</p>
-              <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} placeholder="L\u00fd do h\u1ee7y (b\u1eaft bu\u1ed9c)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
+              <h3 className="text-sm font-semibold text-slate-900 mb-2">Hủy Order</h3>
+              <p className="text-sm text-slate-500 mb-3">Bạn đang hủy order <strong>{order.positionName}</strong> ({order.level}, SL: {order.quantity})</p>
+              <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} placeholder="Lý do hủy (bắt buộc)..." rows={3} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none mb-3" />
               <div className="flex gap-3">
-                <button onClick={handleCancel} disabled={actionLoading} className="px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "\u0110ang x\u1eed l\u00fd..." : "X\u00e1c nh\u1eadn h\u1ee7y"}</button>
-                <button onClick={() => { setShowCancelForm(false); setCancelReason(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">Quay l\u1ea1i</button>
+                <button onClick={handleCancel} disabled={actionLoading} className="px-4 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-xl cursor-pointer transition-colors">{actionLoading ? "Đang xử lý..." : "Xác nhận hủy"}</button>
+                <button onClick={() => { setShowCancelForm(false); setCancelReason(""); }} className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors">Quay lại</button>
               </div>
             </div>
           )}
@@ -266,18 +266,18 @@ export default function OrderDetailPage() {
 
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h3 className="text-sm font-semibold text-slate-900 mb-4">L\u1ecbch s\u1eed duy\u1ec7t</h3>
-            {order.approvalRecords.length === 0 ? (<p className="text-sm text-slate-400">Ch\u01b0a c\u00f3 th\u00f4ng tin duy\u1ec7t</p>) : (
+            <h3 className="text-sm font-semibold text-slate-900 mb-4">Lịch sử duyệt</h3>
+            {order.approvalRecords.length === 0 ? (<p className="text-sm text-slate-400">Chưa có thông tin duyệt</p>) : (
               <div className="space-y-4">
                 {order.approvalRecords.map((record, index) => {
                   const isLast = index === order.approvalRecords.length - 1;
                   const levelInfo = ROLE_LABELS[record.approvalLevel] || { label: record.approvalLevel, color: "text-slate-700", bg: "bg-slate-50" };
                   let decisionIcon; let decisionColor; let decisionLabel;
                   switch (record.decision) {
-                    case "APPROVED": decisionIcon = <CheckCircle className="w-5 h-5 text-emerald-500" />; decisionColor = "text-emerald-600"; decisionLabel = "\u0110\u00e3 duy\u1ec7t"; break;
-                    case "REJECTED": decisionIcon = <XCircle className="w-5 h-5 text-red-500" />; decisionColor = "text-red-600"; decisionLabel = "T\u1eeb ch\u1ed1i"; break;
-                    case "CANCELLED": decisionIcon = <Ban className="w-5 h-5 text-slate-400" />; decisionColor = "text-slate-500"; decisionLabel = "\u0110\u00e3 h\u1ee7y"; break;
-                    default: decisionIcon = <Clock className="w-5 h-5 text-amber-500" />; decisionColor = "text-amber-600"; decisionLabel = "Ch\u1edd duy\u1ec7t";
+                    case "APPROVED": decisionIcon = <CheckCircle className="w-5 h-5 text-emerald-500" />; decisionColor = "text-emerald-600"; decisionLabel = "Đã duyệt"; break;
+                    case "REJECTED": decisionIcon = <XCircle className="w-5 h-5 text-red-500" />; decisionColor = "text-red-600"; decisionLabel = "Từ chối"; break;
+                    case "CANCELLED": decisionIcon = <Ban className="w-5 h-5 text-slate-400" />; decisionColor = "text-slate-500"; decisionLabel = "Đã hủy"; break;
+                    default: decisionIcon = <Clock className="w-5 h-5 text-amber-500" />; decisionColor = "text-amber-600"; decisionLabel = "Chờ duyệt";
                   }
                   return (
                     <div key={record.id} className="relative">
@@ -304,19 +304,19 @@ export default function OrderDetailPage() {
           {!showApproveForm && !showRejectForm && !showCancelForm && (
             <div className="mt-4 space-y-2">
               {isHM && order.status === "DRAFT" && (<>
-                <button onClick={() => router.push(`/orders/${id}/edit`)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors"><Pencil className="w-4 h-4" />Ch\u1ec9nh s\u1eeda</button>
-                <button onClick={handleSubmit} disabled={actionLoading} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer transition-colors"><Send className="w-4 h-4" />G\u1eedi duy\u1ec7t</button>
-                <button onClick={() => setShowCancelForm(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium rounded-xl cursor-pointer transition-colors"><Ban className="w-4 h-4" />H\u1ee7y order</button>
+                <button onClick={() => router.push(`/orders/${id}/edit`)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium rounded-xl cursor-pointer transition-colors"><Pencil className="w-4 h-4" />Chỉnh sửa</button>
+                <button onClick={handleSubmit} disabled={actionLoading} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer transition-colors"><Send className="w-4 h-4" />Gửi duyệt</button>
+                <button onClick={() => setShowCancelForm(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium rounded-xl cursor-pointer transition-colors"><Ban className="w-4 h-4" />Hủy order</button>
               </>)}
               {isHM && order.status === "PENDING_APPROVAL" && (
-                <button onClick={() => setShowCancelForm(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium rounded-xl cursor-pointer transition-colors"><Ban className="w-4 h-4" />H\u1ee7y order</button>
+                <button onClick={() => setShowCancelForm(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium rounded-xl cursor-pointer transition-colors"><Ban className="w-4 h-4" />Hủy order</button>
               )}
               {isHM && order.status === "REJECTED" && (
-                <button onClick={() => router.push(`/orders/${id}/edit`)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><Pencil className="w-4 h-4" />Ch\u1ec9nh s\u1eeda & G\u1eedi l\u1ea1i</button>
+                <button onClick={() => router.push(`/orders/${id}/edit`)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><Pencil className="w-4 h-4" />Chỉnh sửa & Gửi lại</button>
               )}
               {hasPendingRecord && order.status === "PENDING_APPROVAL" && (<>
-                <button onClick={() => { setShowApproveForm(true); setShowRejectForm(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><CheckCircle className="w-4 h-4" />Duy\u1ec7t</button>
-                <button onClick={() => { setShowRejectForm(true); setShowApproveForm(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><XCircle className="w-4 h-4" />T\u1eeb ch\u1ed1i</button>
+                <button onClick={() => { setShowApproveForm(true); setShowRejectForm(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><CheckCircle className="w-4 h-4" />Duyệt</button>
+                <button onClick={() => { setShowRejectForm(true); setShowApproveForm(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl cursor-pointer transition-colors"><XCircle className="w-4 h-4" />Từ chối</button>
               </>)}
             </div>
           )}

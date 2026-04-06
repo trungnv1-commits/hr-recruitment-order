@@ -26,37 +26,37 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const doLogin = async (loginEmail: string, loginPassword: string) => {
+    setError('');
     setIsLoading(true);
-
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
       });
-
       const data = await res.json();
-
       if (!res.ok) {
-        setError(data.error || "Đăng nhập thất bại");
+        setError(data.error || 'Login failed');
         return;
       }
-
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch {
-      setError("Không thể kết nối server. Vui lòng thử lại.");
+      setError('Cannot connect to server');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleQuickLogin = (accountEmail: string) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doLogin(email, password);
+  };
+
+  const handleQuickLogin = async (accountEmail: string) => {
     setEmail(accountEmail);
     setPassword("test123");
-    setError("");
+    await doLogin(accountEmail, 'test123');
   };
 
   return (
