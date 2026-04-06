@@ -1,0 +1,268 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Save, Send, ArrowLeft, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
+
+interface UserInfo {
+  userId: string;
+  email: string;
+  role: string;
+  fullName: string;
+  ventureId: string | null;
+}
+
+interface ApprovalRecord {
+  id: string;
+  decision: string;
+  comment: string | null;
+  decidedAt: string | null;
+  approver: { fullName: string };
+}
+
+interface Order {
+  id: string;
+  positionName: string;
+  level: string;
+  quantity: number;
+  recruitmentType: string;
+  reason: string;
+  status: string;
+  jdAttachmentUrl: string | null;
+  hiringManagerId: string;
+  approvalRecords: ApprovalRecord[];
+}
+
+const LEVELS = [
+  { value: "Junior", label: "Junior" },
+  { value: "Mid", label: "Mid" },
+  { value: "Senior", label: "Senior" },
+  { value: "Lead", label: "Lead" },
+  { value: "Manager", label: "Manager" },
+];
+
+export default function EditOrderPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const [recruitmentType, setRecruitmentType] = useState<"NEW" | "REPLACEMENT">("NEW");
+  const [positionName, setPositionName] = useState("");
+  const [level, setLevel] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [reason, setReason] = useState("");
+  const [jdUrl, setJdUrl] = useState("");
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) {
+          if (data.user.role !== "HIRING_MANAGER") {
+            toast.error("Ch\u1ec9 Hiring Manager m\u1edbi \u0111\u01b0\u1ee3c ch\u1ec9nh s\u1eeda order");
+            router.push("/orders");
+            return;
+          }
+          setUser(data.user);
+        } else {
+          router.push("/login");
+        }
+      })
+      .catch(() => router.push("/login"));
+  }, [router]);
+
+  const fetchOrder = useCallback(async () => {
+    if (!id || !user) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.hiringManagerId !== user.userId) {
+          toast.error("B\u1ea1n kh\u00f4ng c\u00f3 quy\u1ec1n ch\u1ec9nh s\u1eeda order n\u00e0y");
+          router.push("/orders");
+          return;
+        }
+        if (!["DRAFT", "REJECTED"].includes(data.status)) {
+          toast.error("Ch\u1ec9 c\u00f3 th\u1ec3 ch\u1ec9nh s\u1eeda order \u1edf tr\u1ea1ng th\u00e1i Nh\u00e1p ho\u1eb7c T\u1eeb ch\u1ed1i");
+          router.push(`/orders/${id}`);
+          return;
+        }
+        setOrder(data);
+        setRecruitmentType(data.recruitmentType);
+        setPositionName(data.positionName);
+        setLevel(data.level);
+        setQuantity(data.quantity);
+        setReason(data.reason);
+        setJdUrl(data.jdAttachmentUrl || "");
+      } else {
+        toast.error("Kh\u00f4ng th\u1ec3 t\u1ea3i th\u00f4ng tin order");
+        router.push("/orders");
+      }
+    } catch {
+      toast.error("L\u1ed7i k\u1ebft n\u1ed1i server");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, user, router]);
+
+  useEffect(() => { if (user) fetchOrder(); }, [user, fetchOrder]);
+
+  const validateForm = (): boolean => {
+    if (!positionName.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp t\u00ean v\u1ecb tr\u00ed"); return false; }
+    if (!level) { toast.error("Vui l\u00f2ng ch\u1ecdn level"); return false; }
+    if (quantity < 1) { toast.error("S\u1ed1 l\u01b0\u1ee3ng ph\u1ea3i l\u1edbn h\u01a1n 0"); return false; }
+    if (!reason.trim()) { toast.error("Vui l\u00f2ng nh\u1eadp l\u00fd do tuy\u1ec3n d\u1ee5ng"); return false; }
+    return true;
+  };
+
+  const updateOrder = async () => {
+    const res = await fetch(`/api/orders/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ positionName, level, quantity, recruitmentType, reason, jdAttachmentUrl: jdUrl || null }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "C\u1eadp nh\u1eadt th\u1ea5t b\u1ea1i");
+    }
+    return res.json();
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    setSubmitting(true);
+    try {
+      await updateOrder();
+      toast.success("C\u1eadp nh\u1eadt th\u00e0nh c\u00f4ng!");
+      router.push(`/orders/${id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "L\u1ed7i c\u1eadp nh\u1eadt");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSaveAndResubmit = async () => {
+    if (!validateForm()) return;
+    setSubmitting(true);
+    try {
+      await updateOrder();
+      const submitRes = await fetch(`/api/orders/${id}/submit`, { method: "POST" });
+      if (!submitRes.ok) {
+        const data = await submitRes.json();
+        throw new Error(data.error || "G\u1eedi duy\u1ec7t th\u1ea5t b\u1ea1i");
+      }
+      toast.success("C\u1eadp nh\u1eadt v\u00e0 g\u1eedi duy\u1ec7t th\u00e0nh c\u00f4ng!");
+      router.push(`/orders/${id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "L\u1ed7i g\u1eedi duy\u1ec7t");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const rejectionRecord = order?.approvalRecords.find((r) => r.decision === "REJECTED");
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i}>
+              <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2" />
+              <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !order) return null;
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <button onClick={() => router.push(`/orders/${id}`)} className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm cursor-pointer transition-colors">
+        <ArrowLeft className="w-4 h-4" />Quay l\u1ea1i chi ti\u1ebft order
+      </button>
+
+      {order.status === "REJECTED" && rejectionRecord && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="text-sm font-semibold text-red-900">Order b\u1ecb t\u1eeb ch\u1ed1i</h3>
+              <p className="text-sm text-red-700 mt-1">B\u1edfi: {rejectionRecord.approver.fullName}</p>
+              {rejectionRecord.comment && <p className="text-sm text-red-700 mt-1 font-medium">{rejectionRecord.comment}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 className="text-xl font-bold text-slate-900 mb-6">Ch\u1ec9nh s\u1eeda Order</h2>
+        <div className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Lo\u1ea1i tuy\u1ec3n <span className="text-red-500">*</span></label>
+            <div className="flex gap-4">
+              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "NEW" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
+                <input type="radio" name="recruitmentType" value="NEW" checked={recruitmentType === "NEW"} onChange={() => setRecruitmentType("NEW")} className="w-4 h-4 text-blue-600 accent-blue-600" />
+                <div><div className="text-sm font-medium text-slate-900">Tuy\u1ec3n m\u1edbi (NEW)</div><div className="text-xs text-slate-500">V\u1ecb tr\u00ed m\u1edbi trong k\u1ebf ho\u1ea1ch</div></div>
+              </label>
+              <label className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${recruitmentType === "REPLACEMENT" ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300"}`}>
+                <input type="radio" name="recruitmentType" value="REPLACEMENT" checked={recruitmentType === "REPLACEMENT"} onChange={() => setRecruitmentType("REPLACEMENT")} className="w-4 h-4 text-blue-600 accent-blue-600" />
+                <div><div className="text-sm font-medium text-slate-900">Thay th\u1ebf (REPLACEMENT)</div><div className="text-xs text-slate-500">Thay th\u1ebf nh\u00e2n s\u1ef1 ngh\u1ec9 vi\u1ec7c</div></div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">V\u1ecb tr\u00ed <span className="text-red-500">*</span></label>
+            <input id="positionName" type="text" value={positionName} onChange={(e) => setPositionName(e.target.value)} placeholder="VD: Backend Developer, Product Manager..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
+          </div>
+
+          <div>
+            <label htmlFor="level" className="block text-sm font-medium text-slate-700 mb-1.5">Level <span className="text-red-500">*</span></label>
+            <select id="level" value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer">
+              <option value="">-- Ch\u1ecdn level --</option>
+              {LEVELS.map((l) => (<option key={l.value} value={l.value}>{l.label}</option>))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1.5">S\u1ed1 l\u01b0\u1ee3ng <span className="text-red-500">*</span></label>
+            <input id="quantity" type="number" min={1} value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500" />
+          </div>
+
+          <div>
+            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1.5">L\u00fd do tuy\u1ec3n <span className="text-red-500">*</span></label>
+            <textarea id="reason" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="M\u00f4 t\u1ea3 l\u00fd do c\u1ea7n tuy\u1ec3n d\u1ee5ng..." rows={4} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none" />
+          </div>
+
+          <div>
+            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 mb-1.5">JD URL <span className="text-slate-400 text-xs font-normal">(kh\u00f4ng b\u1eaft bu\u1ed9c)</span></label>
+            <input id="jdUrl" type="text" value={jdUrl} onChange={(e) => setJdUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500" />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-slate-100">
+          <button onClick={handleSave} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 disabled:bg-slate-100 text-slate-700 font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
+            {submitting ? <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" /> : <><Save className="w-5 h-5" />L\u01b0u</>}
+          </button>
+          <button onClick={handleSaveAndResubmit} disabled={submitting} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors">
+            {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-5 h-5" />L\u01b0u & G\u1eedi l\u1ea1i</>}
+          </button>
+        </div>
+
+        <div className="text-center mt-4">
+          <button onClick={() => router.push(`/orders/${id}`)} className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer transition-colors">H\u1ee7y b\u1ecf</button>
+        </div>
+      </div>
+    </div>
+  );
+}

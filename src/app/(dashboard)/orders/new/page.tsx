@@ -1,0 +1,347 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Save, Send, ArrowLeft } from "lucide-react";
+import toast from "react-hot-toast";
+
+interface UserInfo {
+  userId: string;
+  email: string;
+  role: string;
+  fullName: string;
+  ventureId: string | null;
+}
+
+const LEVELS = [
+  { value: "Junior", label: "Junior" },
+  { value: "Mid", label: "Mid" },
+  { value: "Senior", label: "Senior" },
+  { value: "Lead", label: "Lead" },
+  { value: "Manager", label: "Manager" },
+];
+
+export default function NewOrderPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Form state
+  const [recruitmentType, setRecruitmentType] = useState<"NEW" | "REPLACEMENT">("NEW");
+  const [positionName, setPositionName] = useState("");
+  const [level, setLevel] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [reason, setReason] = useState("");
+  const [jdUrl, setJdUrl] = useState("");
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) {
+          if (data.user.role !== "HIRING_MANAGER") {
+            toast.error("Chỉ Hiring Manager mới được tạo order");
+            router.push("/orders");
+            return;
+          }
+          setUser(data.user);
+        } else {
+          router.push("/login");
+        }
+      })
+      .catch(() => router.push("/login"))
+      .finally(() => setLoading(false));
+  }, [router]);
+
+  const validateForm = (): boolean => {
+    if (!positionName.trim()) {
+      toast.error("Vui lòng nhập tên vị trí");
+      return false;
+    }
+    if (!level) {
+      toast.error("Vui lòng chọn level");
+      return false;
+    }
+    if (quantity < 1) {
+      toast.error("Số lượng phải lớn hơn 0");
+      return false;
+    }
+    if (!reason.trim()) {
+      toast.error("Vui lòng nhập lý do tuyển dụng");
+      return false;
+    }
+    return true;
+  };
+
+  const createOrder = async () => {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        positionName,
+        level,
+        quantity,
+        recruitmentType,
+        reason,
+        jdAttachmentUrl: jdUrl || null,
+      }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Tạo order thất bại");
+    }
+
+    return res.json();
+  };
+
+  const handleSaveDraft = async () => {
+    if (!validateForm()) return;
+    setSubmitting(true);
+
+    try {
+      await createOrder();
+      toast.success("Đã lưu nháp thành công!");
+      router.push("/orders");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Lỗi tạo order");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSaveAndSubmit = async () => {
+    if (!validateForm()) return;
+    setSubmitting(true);
+
+    try {
+      const order = await createOrder();
+
+      // Submit for approval
+      const submitRes = await fetch(`/api/orders/${order.id}/submit`, {
+        method: "POST",
+      });
+
+      if (!submitRes.ok) {
+        const data = await submitRes.json();
+        throw new Error(data.error || "Gửi duyệt thất bại");
+      }
+
+      toast.success("Đã tạo và gửi duyệt thành công!");
+      router.push(`/orders/${order.id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Lỗi gửi duyệt");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i}>
+              <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2" />
+              <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== "HIRING_MANAGER") return null;
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Back button */}
+      <button
+        onClick={() => router.push("/orders")}
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm cursor-pointer transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Quay lại danh sách
+      </button>
+
+      {/* Form */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <h2 className="text-xl font-bold text-slate-900 mb-6">Tạo Order Tuyển Dụng</h2>
+
+        <div className="space-y-5">
+          {/* Recruitment Type */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Loại tuyển <span className="text-red-500">*</span>
+            </label>
+            <div className="flex gap-4">
+              <label
+                className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
+                  recruitmentType === "NEW"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-slate-200 hover:border-slate-300"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="recruitmentType"
+                  value="NEW"
+                  checked={recruitmentType === "NEW"}
+                  onChange={() => setRecruitmentType("NEW")}
+                  className="w-4 h-4 text-blue-600 accent-blue-600"
+                />
+                <div>
+                  <div className="text-sm font-medium text-slate-900">Tuyển mới (NEW)</div>
+                  <div className="text-xs text-slate-500">Vị trí mới trong kế hoạch</div>
+                </div>
+              </label>
+              <label
+                className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
+                  recruitmentType === "REPLACEMENT"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-slate-200 hover:border-slate-300"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="recruitmentType"
+                  value="REPLACEMENT"
+                  checked={recruitmentType === "REPLACEMENT"}
+                  onChange={() => setRecruitmentType("REPLACEMENT")}
+                  className="w-4 h-4 text-blue-600 accent-blue-600"
+                />
+                <div>
+                  <div className="text-sm font-medium text-slate-900">Thay thế (REPLACEMENT)</div>
+                  <div className="text-xs text-slate-500">Thay thế nhân sự nghỉ việc</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Position Name */}
+          <div>
+            <label htmlFor="positionName" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Vị trí <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="positionName"
+              type="text"
+              value={positionName}
+              onChange={(e) => setPositionName(e.target.value)}
+              placeholder="VD: Backend Developer, Product Manager..."
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
+            />
+          </div>
+
+          {/* Level */}
+          <div>
+            <label htmlFor="level" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Level <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="level"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500 cursor-pointer"
+            >
+              <option value="">-- Chọn level --</option>
+              {LEVELS.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Quantity */}
+          <div>
+            <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Số lượng <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="quantity"
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 hover:border-slate-300 focus:border-blue-500"
+            />
+          </div>
+
+          {/* Reason */}
+          <div>
+            <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Lý do tuyển <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Mô tả lý do cần tuyển dụng..."
+              rows={4}
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500 resize-none"
+            />
+          </div>
+
+          {/* JD URL */}
+          <div>
+            <label htmlFor="jdUrl" className="block text-sm font-medium text-slate-700 mb-1.5">
+              JD URL <span className="text-slate-400 text-xs font-normal">(không bắt buộc)</span>
+            </label>
+            <input
+              id="jdUrl"
+              type="text"
+              value={jdUrl}
+              onChange={(e) => setJdUrl(e.target.value)}
+              placeholder="https://..."
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 hover:border-slate-300 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-slate-100">
+          <button
+            onClick={handleSaveDraft}
+            disabled={submitting}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 disabled:bg-slate-100 text-slate-700 font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors"
+          >
+            {submitting ? (
+              <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Lưu nháp
+              </>
+            )}
+          </button>
+          <button
+            onClick={handleSaveAndSubmit}
+            disabled={submitting}
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors"
+          >
+            {submitting ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                Lưu & Gửi duyệt
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Cancel */}
+        <div className="text-center mt-4">
+          <button
+            onClick={() => router.push("/orders")}
+            className="text-sm text-slate-500 hover:text-slate-700 cursor-pointer transition-colors"
+          >
+            Hủy bỏ
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

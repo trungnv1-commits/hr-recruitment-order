@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===================== ENUMS =====================
+
+enum Role {
+  HIRING_MANAGER
+  CEO_VENTURE
+  CEO_GROUP
+  HR
+}
+
+enum RecruitmentType {
+  NEW
+  REPLACEMENT
+}
+
+enum OrderStatus {
+  DRAFT
+  PENDING_HC_CHECK
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum HCCheckResult {
+  WITHIN_HC
+  OVER_HC
+  SKIPPED
+}
+
+enum ApprovalLevel {
+  CEO_VENTURE
+  CEO_GROUP
+}
+
+enum ApprovalDecision {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum NotificationChannel {
+  EMAIL
+  DISCORD
+  IN_APP
+}
+
+enum NotificationType {
+  HC_OVER_ALERT
+  APPROVAL_REQUEST
+  REJECTION_NOTICE
+  ORDER_APPROVED
+  ORDER_CANCELLED
+  APPROVAL_REMINDER
+}
+
+// ===================== MODELS =====================
+
+model Venture {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  users            User[]
+  recruitmentOrders RecruitmentOrder[]
+  headcountPlans   HeadcountPlan[]
+  jobDescriptions  JobDescription[]
+
+  @@map("ventures")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  fullName     String   @map("full_name")
+  role         Role
+  ventureId    String?  @map("venture_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  venture           Venture?           @relation(fields: [ventureId], references: [id])
+  createdOrders     RecruitmentOrder[] @relation("OrderCreator")
+  cancelledOrders   RecruitmentOrder[] @relation("OrderCanceller")
+  approvalRecords   ApprovalRecord[]
+  notifications     Notification[]
+
+  @@map("users")
+}
+
+model RecruitmentOrder {
+  id              String          @id @default(uuid())
+  hiringManagerId String          @map("hiring_manager_id")
+  ventureId       String          @map("venture_id")
+  positionName    String          @map("position_name")
+  level           String
+  quantity        Int
+  recruitmentType RecruitmentType @map("recruitment_type")
+  reason          String
+  jdAttachmentUrl String?         @map("jd_attachment_url")
+  status          OrderStatus     @default(DRAFT)
+  hcCheckResult   HCCheckResult?  @map("hc_check_result")
+  hcOverReason    String?         @map("hc_over_reason")
+  planYear        Int?            @map("plan_year")
+  cancelledAt     DateTime?       @map("cancelled_at")
+  cancelledBy     String?         @map("cancelled_by")
+  cancelledReason String?         @map("cancelled_reason")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  hiringManager   User             @relation("OrderCreator", fields: [hiringManagerId], references: [id])
+  canceller       User?            @relation("OrderCanceller", fields: [cancelledBy], references: [id])
+  venture         Venture          @relation(fields: [ventureId], references: [id])
+  approvalRecords ApprovalRecord[]
+  notifications   Notification[]
+  jobDescription  JobDescription?
+
+  @@map("recruitment_orders")
+}
+
+model ApprovalRecord {
+  id            String           @id @default(uuid())
+  orderId       String           @map("order_id")
+  approverId    String           @map("approver_id")
+  approvalLevel ApprovalLevel    @map("approval_level")
+  decision      ApprovalDecision @default(PENDING)
+  comment       String?
+  decidedAt     DateTime?        @map("decided_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  order    RecruitmentOrder @relation(fields: [orderId], references: [id])
+  approver User             @relation(fields: [approverId], references: [id])
+
+  @@map("approval_records")
+}
+
+model HeadcountPlan {
+  id           String   @id @default(uuid())
+  ventureId    String   @map("venture_id")
+  year         Int
+  department   String?
+  positionName String?  @map("position_name")
+  plannedHc    Int      @map("planned_hc")
+  usedHc       Int      @default(0) @map("used_hc")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  venture Venture @relation(fields: [ventureId], references: [id])
+
+  @@map("headcount_plans")
+}
+
+model JobDescription {
+  id               String   @id @default(uuid())
+  ventureId        String   @map("venture_id")
+  orderId          String?  @unique @map("order_id")
+  positionName     String   @map("position_name")
+  level            String?
+  jdContent        String?  @map("jd_content")
+  candidateProfile String?  @map("candidate_profile")
+  fileUrl          String?  @map("file_url")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  venture Venture           @relation(fields: [ventureId], references: [id])
+  order   RecruitmentOrder? @relation(fields: [orderId], references: [id])
+
+  @@map("job_descriptions")
+}
+
+model Notification {
+  id               String              @id @default(uuid())
+  orderId          String              @map("order_id")
+  recipientId      String              @map("recipient_id")
+  channel          NotificationChannel
+  notificationType NotificationType    @map("notification_type")
+  content          String?
+  isRead           Boolean             @default(false) @map("is_read")
+  sentAt           DateTime?           @map("sent_at")
+
+  order     RecruitmentOrder @relation(fields: [orderId], references: [id])
+  recipient User             @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
+}
